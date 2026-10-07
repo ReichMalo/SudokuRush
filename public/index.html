@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku Rush</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+
+    <section id="screen-home" class="screen">
+        <h1>Sudoku Rush</h1>
+        <p class="lede">Une seule grille, tout le monde écrit en même temps. Case juste : +1. Erreur : −3.</p>
+
+        <label for="name">Ton pseudo</label>
+        <input id="name" maxlength="16" autocomplete="nickname" placeholder="Camille">
+
+        <button id="btn-create" class="primary">Créer un salon</button>
+
+        <div class="separator"><span>ou</span></div>
+
+        <label for="code">Code d'un salon existant</label>
+        <div class="row">
+            <input id="code" maxlength="4" autocapitalize="characters" autocomplete="off" placeholder="ABCD">
+            <button id="btn-join">Rejoindre</button>
+        </div>
+        <p id="home-error" class="error" role="alert" hidden></p>
+    </section>
+
+    <section id="screen-lobby" class="screen" hidden>
+        <p class="muted">Code du salon</p>
+        <div class="row code-row">
+            <strong id="room-code" class="code"></strong>
+            <button id="btn-copy">Copier le lien</button>
+        </div>
+
+        <h2>Joueurs <span id="player-count" class="muted"></span></h2>
+        <ul id="lobby-players" class="players"></ul>
+
+        <div id="host-controls" class="host-controls">
+            <label for="difficulty">Difficulté</label>
+            <select id="difficulty">
+                <option value="easy">Facile</option>
+                <option value="medium" selected>Moyenne</option>
+                <option value="hard">Difficile</option>
+            </select>
+            <button id="btn-start" class="primary">Lancer la partie</button>
+        </div>
+        <p id="wait-host" class="muted" hidden>En attente de l'hôte pour lancer la partie…</p>
+    </section>
+
+    <section id="screen-game" class="screen wide" hidden>
+        <div class="game-layout">
+            <div class="board-col">
+                <div id="canvas-holder"></div>
+                <div id="numpad" class="numpad" aria-label="Pavé numérique"></div>
+            </div>
+            <aside class="side">
+                <h2>Scores</h2>
+                <ol id="scores" class="scores"></ol>
+                <p class="muted"><span id="remaining">0</span> cases restantes</p>
+                <button id="btn-leave" class="secondary">Quitter la partie</button>
+            </aside>
+        </div>
+
+        <div id="end" class="end" role="dialog" aria-modal="true" aria-labelledby="end-title" hidden>
+            <div class="end-card">
+                <h2 id="end-title"></h2>
+                <ol id="end-ranking" class="ranking"></ol>
+                <button id="btn-rematch" class="primary">Rejouer</button>
+                <p id="end-wait" class="muted" hidden>L'hôte peut relancer une partie.</p>
+            </div>
+        </div>
+    </section>
+
+</main>
+<div id="toast" class="toast" role="status" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
