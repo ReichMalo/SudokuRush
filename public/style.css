@@ -120,8 +120,10 @@ button:disabled { opacity: .35; cursor: not-allowed; }
     cursor: pointer;
 }
 
-.numpad { display: grid; grid-template-columns: repeat(9, 1fr); gap: .35rem; margin-top: .8rem; }
+/* numpad en 3x3 */
+.numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: .35rem; margin-top: .8rem; }
 .numpad button {
+    height: 4.3rem;
     padding: .55rem 0;
     font-family: var(--font-display);
     font-size: 1.25rem;
@@ -177,6 +179,12 @@ button:disabled { opacity: .35; cursor: not-allowed; }
 .ranking li::before { content: counter(rank); width: 1.2rem; font-family: var(--font-display); font-weight: 800; color: var(--muted); }
 .ranking li.winner { background: #fff3cf; }
 .ranking .score { font-family: var(--font-display); font-weight: 800; font-variant-numeric: tabular-nums; }
+.numpad-toggle { display: flex; align-items: center; justify-content: center; width: 3.5rem; height: 3.5rem; border-radius: 10px; background: var(--card); border: 1.5px solid var(--line); cursor: pointer; }
+.numpad-toggle.active { background: var(--ink); border-color: var(--ink); }
+.numpad-toggle.active .numpad-icon { filter: invert(1); }
+.numpad-icon { width: 1.5rem; height: 1.5rem; user-select: none }
+
+
 
 .toast {
     position: fixed;

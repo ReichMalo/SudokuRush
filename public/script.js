@@ -46,6 +46,8 @@ const S = {
     owners: new Array(81).fill(0),
     remaining: 0,
     sel: null,
+    editing: false,
+    marks: Array.from({ length: 81 }, () => new Array(9).fill(false)),
     flashes: [],
 };
 
@@ -98,6 +100,9 @@ function onMessage(msg) {
             S.remaining = msg.remaining;
             S.players = msg.players;
             S.sel = null;
+            S.editing = false;
+            S.marks = Array.from({ length: 81 }, () => new Array(9).fill(false));
+            $('#edit-toggle').classList.remove('active');
             S.flashes = [];
             S.phase = 'playing';
             $('#end').hidden = true;
@@ -111,6 +116,7 @@ function onMessage(msg) {
             const i = msg.row * 9 + msg.col;
             S.grid[i] = msg.value;
             S.owners[i] = msg.by;
+            S.marks[i] = new Array(9).fill(false);
             S.remaining = msg.remaining;
             S.players = msg.players;
             S.flashes.push({ type: 'ok', i, color: colorOf(msg.by), t: performance.now(), dur: 700 });
@@ -265,10 +271,29 @@ for (let v = 1; v <= 9; v++) {
 function updateNumpad() {
     const counts = new Array(10).fill(0);
     for (const v of S.grid) counts[v]++;
-    numpadButtons.forEach((b, idx) => { b.disabled = counts[idx + 1] >= 9; });
+    numpadButtons.forEach((b, idx) => {
+        b.disabled = !S.editing && counts[idx + 1] >= 9;
+    });
 }
 
+$('#edit-toggle').addEventListener('click', () => {
+    S.editing = !S.editing;
+    $('#edit-toggle').classList.toggle('active', S.editing);
+    updateNumpad();
+});
+
+function tryMark(value) {
+    if (S.phase !== 'playing' || S.sel === null) return;
+    if (!S.editing) return;
+    if (S.grid[S.sel] !== 0) return;
+    if (!S.marks) S.marks = Array.from({ length: 81 }, () => new Array(9).fill(false));
+    const marks = S.marks[S.sel];
+    marks[value - 1] = !marks[value - 1];
+}
+
+
 function tryPlace(value) {
+    if (S.editing) return tryMark(value);
     if (S.phase !== 'playing' || S.sel === null) return;
     if (S.grid[S.sel] !== 0) return;
     send({ type: 'move', row: Math.floor(S.sel / 9), col: S.sel % 9, value });
@@ -388,6 +413,64 @@ function draw() {
             text(f.value, c * cs + cs / 2 + Math.sin((now - f.t) * 0.06) * 4 * k, r * cs + cs / 2 + cs * 0.04);
         }
     }
+
+    textStyle(NORMAL);
+    textSize(cs * 0.20);
+    fill(C.ink);
+
+    for (let i = 0; i < 81; i++) {
+        if (S.grid[i] !== 0) continue;
+
+        const notes = S.marks[i];
+        if (!notes) continue;
+
+        const r = Math.floor(i / 9);
+        const c = i % 9;
+
+        for (let value = 1; value <= 9; value++) {
+            if (!notes[value - 1]) continue;
+
+            const noteRow = Math.floor((value - 1) / 3);
+            const noteCol = (value - 1) % 3;
+
+            text(
+                value,
+                c * cs + (noteCol + 0.5) * (cs / 3),
+                r * cs + (noteRow + 0.5) * (cs / 3)
+            );
+        }
+    }
+
+    textStyle(NORMAL);
+    textSize(cs * 0.20);
+    fill(C.ink);
+
+    for (let i = 0; i < 81; i++) {
+        if (S.grid[i] !== 0) continue;
+
+        const notes = S.marks[i];
+        if (!notes) continue;
+
+        const r = Math.floor(i / 9);
+        const c = i % 9;
+
+        for (let value = 1; value <= 9; value++) {
+            if (!notes[value - 1]) continue;
+
+            const noteRow = Math.floor((value - 1) / 3);
+            const noteCol = (value - 1) % 3;
+
+            text(
+                value,
+                c * cs + (noteCol + 0.5) * (cs / 3),
+                r * cs + (noteRow + 0.5) * (cs / 3)
+            );
+        }
+    }
+
+    textStyle(NORMAL);
+    textSize(cs * 0.56);
+    fill(C.ink);
 
     for (let i = 0; i < 81; i++) {
         const v = S.grid[i];
